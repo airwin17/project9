@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "ApiGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.airwin.ApiGatewayApplication",
+            "projectName": "apigateway"
+        },
+        {
+            "type": "java",
+            "name": "EurekaServerApplication",
+            "request": "launch",
+            "mainClass": "com.airwin.EurekaServerApplication",
+            "projectName": "eurekaserver"
+        },
+        {
+            "type": "java",
+            "name": "PatientmanagerApplication",
+            "request": "launch",
+            "mainClass": "com.airwin.PatientmanagerApplication",
+            "projectName": "patientmanager"
+        },
+        {
+            "type": "java",
+            "name": "RiskManagerApp",
+            "request": "launch",
+            "mainClass": "com.airwin.RiskManagerApp",
+            "projectName": "riskmanager"
+        }
+    ]
+}

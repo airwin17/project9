@@ -1,0 +1,31 @@
+[
+    {
+        "key": "1",
+        "label": "Manage users",
+        "icon": "pi pi-user"
+    },
+    {
+        "key": "2",
+        "label": "Patient data",
+        "icon": "pi pi-folder"
+    },
+    {
+        "key": "3",
+        "label": "Patients notes",
+        "icon": "pi pi-file"
+    },
+    {
+        "key": "4",
+        "label": "My profile",
+        "icon": "pi pi-cog"
+    },
+    {
+        "key": "5",
+        "label": "Log out",
+        "icon": "pi pi-sign-out"
+    },
+    {
+        "key": "6",
+        "icon": "pi pi-sun"
+    }
+]

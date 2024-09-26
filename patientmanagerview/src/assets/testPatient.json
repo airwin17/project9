@@ -1,0 +1,38 @@
+[
+    {
+        "id": 0,
+        "name": "TestNone",
+        "lastname": "Test",
+        "birthdate": "1966-12-31",
+        "gender": "Female",
+        "address": "1 Brookside St",
+        "phone": "100-222-3333"
+    },
+    {
+        "id": 1,
+        "name": "TestBorderline",
+        "lastname": "Test",
+        "birthdate": "1945-06-24",
+        "gender": "Male",
+        "address": "2 High St",
+        "phone": "200-333-4444"
+    },
+    {
+        "id": 2,
+        "name": "TestInDanger",
+        "lastname": "Test",
+        "birthdate": "2004-06-18",
+        "gender": "Male",
+        "address": "3 Club Road",
+        "phone": "300-444-5555"
+    },
+    {
+        "id": 3,
+        "name": "TestEarlyOnset",
+        "lastname": "Test",
+        "birthdate": "2002-06-28",
+        "gender": "Female",
+        "address": "4 Valley Dr",
+        "phone": "400-555-6666"
+    }
+]
