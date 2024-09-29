@@ -18,7 +18,7 @@ items.value[0].command=()=>{
 items.value[1].command=()=>{
     window.location.href = '/patientData';
 }
-items.value[4].command=()=>{
+items.value[2].command=()=>{
     fetch('/api/logout', {
         method: 'POST'
     }).then(response => {

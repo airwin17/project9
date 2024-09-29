@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: PatientNotedb
+  application:
+    name: riskmanager
+server:
+  port: 8082
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8083/eureka
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+

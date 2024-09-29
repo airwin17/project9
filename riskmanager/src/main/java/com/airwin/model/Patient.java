@@ -2,25 +2,26 @@ package com.airwin.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Patient {
-    private Integer id;
+    private Integer patientid;
     private String firstname;
     
     private String lastname;
-    
     private PatientGender gender;
-    
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthdate;
     private String phone;
     private String zipcode;
     public Patient(){
 
     }
-    public Integer getId() {
-        return id;
+    public Integer getPatientid() {
+        return patientid;
     }
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPatientid(Integer id) {
+        this.patientid = id;
     }
     public PatientGender getGender() {
         return gender;

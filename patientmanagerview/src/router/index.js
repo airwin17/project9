@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import loginView from '../views/loginView.vue'
-import errorView from '../views/ErrorView.vue'
-//import SigninView from '../views/SigninView.vue'
+import PatientNoteView from '../views/PatientNoteView.vue'
 import patientDataView from '../views/patientDataView.vue'
 import userTableView from '../views/userTableView.vue'
 const router = createRouter({
@@ -12,9 +11,9 @@ const router = createRouter({
       component: loginView,
       props: () => ({ loginRoute: "/api/login" })
     },{
-      path: "/error",
-      component: errorView,
-      props: route=> ({ Response: JSON.parse(route.query.Response) })
+      path: "/patientnote",
+      component: PatientNoteView,
+      props: route=> ({ patientNoteUrl: "/api/note" })
     },
     {
       path:"/patientData",

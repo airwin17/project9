@@ -21,7 +21,7 @@ public class Patient {
     private String lastname;
     @Enumerated(EnumType.STRING)
     private PatientGender gender;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthdate;
     private String phone;
     private String zipcode;

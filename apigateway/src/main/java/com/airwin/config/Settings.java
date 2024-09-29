@@ -1,5 +1,8 @@
 package com.airwin.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 //import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.springframework.web.client.RestTemplate;
+
 import com.airwin.repository.UserRepository;
 import com.airwin.service.UserService;
+import com.netflix.discovery.EurekaClient;
 
 import reactor.core.publisher.Mono;
 
@@ -27,6 +33,8 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 @EnableWebFluxSecurity
 @EnableR2dbcRepositories(basePackageClasses = UserRepository.class)
 public class Settings {
+    @Autowired
+private EurekaClient discoveryClient;
     
     private UserRepository userRepository;
     /**
@@ -95,11 +103,13 @@ public class Settings {
         return providerManager;
     }
     @Bean
-public RouteLocator myRotes(RouteLocatorBuilder builder) {
-    return builder.routes()
-        .route(p -> p
-            .path("/api/patient/**")
-            .uri("http://localhost:8081"))
-        .build();
-}
+    public RouteLocator routeLocator(RouteLocatorBuilder builder) {
+        String patientUrl=discoveryClient.getNextServerFromEureka("PATIENTMANAGER", false).getHomePageUrl();
+        String riskUrl=discoveryClient.getNextServerFromEureka("RISKMANAGER", false).getHomePageUrl();
+        return builder.routes()
+        .route("PATIENTMANAGER",r->r.path("/api/patient/**").uri(patientUrl))
+        .route("RISKMANAGER",r->r.path("/api/note/**").uri(riskUrl))
+                .build();
+    }
+
 }

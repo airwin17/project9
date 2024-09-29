@@ -18,7 +18,7 @@ public Mono<User> save( @NonNull User user);
 
 public Mono<User> findByUserid(int userid);
 
-public void deleteByUserid(int userid);
+public Mono<Void> deleteByUserid(int userid);
 @NonNull
 public Flux<User> findAll();
 }

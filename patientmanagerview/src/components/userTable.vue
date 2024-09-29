@@ -5,7 +5,10 @@
     dataKey="userid" resizableColumns 
     selectionMode="single" 
     v-model:selection="selectedUser"
-    @update:selection="onSelectionChange()">
+    @update:selection="onSelectionChange()"
+    @row-unselect="editUserButtonState = true"
+    @row-select="editUserButtonState = false"
+    >
         <template #header>
             <div style="" >
                 <Button icon="pi pi-plus" label="Add" severity="info" @click="onAdd()"></Button>

@@ -66,16 +66,18 @@ public Flux<UserDTO> findAll() {
 */
 public Mono<Void> deleteById(int id, int userid){
     return Mono.create(sink->{
-        Mono <User> userIfExist = userRepository.findByUserid(id)
-           .switchIfEmpty(Mono.error(new UsernameNotFoundException("User not found")));
-           userIfExist.subscribe(user->{
+        userRepository.findByUserid(id).subscribe(user->{
               if(user.getUserid() == userid) {
                   sink.error(new SelfDeleteException());
               }else {
-                  userRepository.deleteByUserid(id);
+                  userRepository.deleteByUserid(id).subscribe();
                   sink.success();
               }
-           });
+           },(error)->{
+               sink.error(new UsernameNotFoundException("User not found"));
+           }
+           ,()->{sink.error(new UsernameNotFoundException("User not found"));}
+           );
     });
 }
 /**
@@ -87,7 +89,7 @@ public Mono<Void> deleteById(int id, int userid){
 public Mono<Map<String,String>> validateUser(User user) {
     return Mono.create(sink->{
         Map<String,String> errors = new HashMap<>();
-        if(user.getUserid()!=null||user.getPassword()!=null){
+        if(user.getUserid()==null||(user.getUserid()!=null&&user.getPassword()!=null)){
             String passwordRegex = "^(?=.*[a-zA-Z])(?=.*[0-9]).{6,}$";
             if(!user.getPassword().matches(passwordRegex)){
                 errors.put("password","Password must be at least 6 characters long and contain at least one letter and one number");

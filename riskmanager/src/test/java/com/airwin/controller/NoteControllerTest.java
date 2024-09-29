@@ -35,7 +35,7 @@ public class NoteControllerTest {
     @Test
     public void testAddNote() throws Exception {
         Patient patient=new Patient();
-        patient.setId(1);
+        patient.setPatientid(1);
         patient.setGender(PatientGender.MALE);
         patient.setBirthdate(LocalDate.of(2000, 12, 24));
         ObjectMapper mapper = new ObjectMapper();

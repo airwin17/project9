@@ -27,14 +27,14 @@ public class PatientController {
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody Patient patient) {
         Map<String, String> errors = patientService.validatePatient(patient);
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty()) 
             return ResponseEntity.badRequest().body(errors);
-        } else
+        else
             return ResponseEntity.ok(patientService.save(patient));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam("id") int id) {
+    public ResponseEntity<String> delete(@RequestParam("patientid") int id) {
         patientService.deleteById(id);
         return ResponseEntity.ok("Patient deleted successfully");
     }

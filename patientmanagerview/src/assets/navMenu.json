@@ -11,21 +11,11 @@
     },
     {
         "key": "3",
-        "label": "Patients notes",
-        "icon": "pi pi-file"
-    },
-    {
-        "key": "4",
-        "label": "My profile",
-        "icon": "pi pi-cog"
-    },
-    {
-        "key": "5",
         "label": "Log out",
         "icon": "pi pi-sign-out"
     },
     {
-        "key": "6",
+        "key": "4",
         "icon": "pi pi-sun"
     }
 ]

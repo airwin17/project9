@@ -1,12 +1,10 @@
 package com.airwin.controllers;
 
-import java.util.Map;
 import java.util.List;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,10 +61,9 @@ public class UserContoller {
                 sink.success(ResponseEntity.ok("User deleted successfully"));
             },error->{
                 if(error instanceof SelfDeleteException) {
-                    sink.success(ResponseEntity.status(HttpStatus.SC_NOT_ACCEPTABLE).body("Cannot delete self"));
+                    sink.success(ResponseEntity.status(HttpStatus.SC_NOT_ACCEPTABLE).body("Cannot delete yourself"));
                 }else if (error instanceof UsernameNotFoundException) {
                     sink.success(ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("User not found"));
-                    
                 }
             });
         });
