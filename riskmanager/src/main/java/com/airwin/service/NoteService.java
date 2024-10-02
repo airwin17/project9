@@ -3,7 +3,10 @@ package com.airwin.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.airwin.model.Note;
 import com.airwin.model.Patient;
@@ -11,11 +14,13 @@ import com.airwin.model.PatientGender;
 import com.airwin.model.PatientHealth;
 import com.airwin.noteDTO.PatientNoteDTO;
 import com.airwin.repositories.NoteRepository;
+import com.netflix.discovery.EurekaClient;
 
 @Service
 public class NoteService {
     private NoteRepository noteRepository;
-
+    @Autowired
+private EurekaClient discoveryClient;
     public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
@@ -35,7 +40,7 @@ public class NoteService {
                 "Taille",
                 "Poids",
                 "Fumeur",
-                " Fumeuse",
+                "Fumeuse",
                 "Anormal",
                 "Cholestérol",
                 "Vertiges",
@@ -52,10 +57,10 @@ public class NoteService {
         int symptomecount=0;
         int age = getPatentAge(patient);
         for(int i = 0; i < symptomes.length; i++) 
-            if(allnotes.contains(symptomes[i])) 
+            if(allnotes.toLowerCase().contains(symptomes[i].toLowerCase())) 
                 symptomecount++;
         patientNoteDTO.setHealth(getPatientHealth(symptomecount, age, patient.getGender()));
-        patientNoteDTO.setNote(notes);
+        patientNoteDTO.setNotes(notes);
         patientNoteDTO.setPatient(patient);
         return patientNoteDTO;
         }
@@ -78,34 +83,13 @@ public class NoteService {
      * @param gender of the patient in enum {@link PatientGender}
      * @return {@link PatientHealth} 
      */
-    public PatientHealth getPatientHealth(int  symptomecount, int age, PatientGender gender) {
-        PatientHealth res=null;
-        if(symptomecount<=1){
-            res=PatientHealth.None;
-        }else if(age>=30){
-            if(symptomecount<=5){
-                res=PatientHealth.Borderline;
-            }else if(symptomecount<=7){
-                res=PatientHealth.In_Danger;
-            }else if(symptomecount>=8){
-                res=PatientHealth.Early_onset;
-            }
-        }else if(age<30){
-            if(gender==PatientGender.MALE){
-                if(symptomecount==3){
-                    res=PatientHealth.In_Danger;
-                }else if(symptomecount>=5){
-                    res=PatientHealth.Early_onset;
-                }
-            }else if (gender==PatientGender.FEMALE){
-                if(symptomecount==4){
-                    res=PatientHealth.In_Danger;
-                }else if(symptomecount>=7){
-                    res=PatientHealth.Early_onset;
-                }
-            }
-        }
-        return res;
+    public PatientHealth getPatientHealth(int symptomecount, int age, PatientGender gender) {
+        RestTemplate restTemplate = new RestTemplate();
+        String riskUrl = discoveryClient.getNextServerFromEureka("RISKCALCULATOR", false).getHomePageUrl();
+        String url = riskUrl+"/api/risk/gethealth?gender="+gender.name()+"&age="+age+"&symptomecount="+symptomecount;
+        ResponseEntity<String> res = restTemplate.getForEntity(url, String.class);
+        
+        return PatientHealth.valueOf(res.getBody());
     }
     /**
      * Get patient age from birthdate in years

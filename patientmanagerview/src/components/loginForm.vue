@@ -38,10 +38,9 @@ function login(e){
     })
     .then(response => {
         if (response.ok) {
-            response.text().then(text => {
-                const authority = text;
-                localStorage.setItem("authority", authority);
-                window.location.href = "/patientData";
+            response.text().then(user => {
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location.href = '/patientData';
             })
         } else {
             alert('Login failed');

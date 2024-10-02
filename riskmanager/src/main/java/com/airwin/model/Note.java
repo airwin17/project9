@@ -5,20 +5,23 @@ import java.time.LocalDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Document(collection = "PatientNote")
 public class Note {
     @Id
-    private int noteid;
+    private String noteid;
     private String note;
     private int patientid;
-    private int userid;
+    private String author;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
     public Note() {
     }
-    public int getId() {
+    public String getNoteid() {
         return noteid;
     }
-    public void setId(int id) {
+    public void setNoteid(String id) {
         this.noteid = id;
     }
     public String getNote() {
@@ -33,11 +36,11 @@ public class Note {
     public void setPatientid(int patientid) {
         this.patientid = patientid;
     }
-    public int getUserid() {
-        return userid;
+    public String getAuthor() {
+        return author;
     }
-    public void setUserid(int userid) {
-        this.userid = userid;
+    public void setauthor(String author) {
+        this.author = author;
     }
     public LocalDate getDate() {
         return date;

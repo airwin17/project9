@@ -28,7 +28,7 @@ public class NoteControllerTest {
     public static void setup() {
         note=new Note();
         note.setDate(LocalDate.now());
-        note.setUserid(1);
+        note.setauthor("23");
         note.setPatientid(1);
         note.setNote("ooo");
     }
@@ -45,7 +45,7 @@ public class NoteControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(mapper.writeValueAsString(patient)))
         .andReturn().getResponse().getContentAsString();
-        assertEquals("ooo", mapper.readValue(result, PatientNoteDTO.class).getNote().get(0).getNote());
+        assertEquals("ooo", mapper.readValue(result, PatientNoteDTO.class).getNotes().get(0).getNote());
     }
 
     @Test

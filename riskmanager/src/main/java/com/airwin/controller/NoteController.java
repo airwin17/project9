@@ -27,6 +27,7 @@ public ResponseEntity<PatientNoteDTO> getNotesByPatientid(@RequestBody Patient p
 
 @PostMapping("/add")
 public ResponseEntity<Note> addNote(@RequestBody Note note) {
+    
     return ResponseEntity.ok(noteService.save(note));
 }
 

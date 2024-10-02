@@ -6,7 +6,6 @@ spring:
     password: rootroot
   application:
     name: patientmanager
-
 server:
   port: 8081
 

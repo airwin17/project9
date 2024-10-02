@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "RiskCalculatorApp",
+            "request": "launch",
+            "mainClass": "com.airwin.RiskCalculatorApp",
+            "projectName": "riskcalculator"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

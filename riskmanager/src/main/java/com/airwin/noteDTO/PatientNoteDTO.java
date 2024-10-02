@@ -8,7 +8,7 @@ import com.airwin.model.PatientHealth;
 
 public class PatientNoteDTO {
     private Patient patient;
-    private List<Note> note;
+    private List<Note> notes;
     private PatientHealth health;
     
     public PatientNoteDTO() {
@@ -19,11 +19,11 @@ public class PatientNoteDTO {
     public void setPatient(Patient patientid) {
         this.patient = patientid;
     }
-    public List<Note> getNote() {
-        return note;
+    public List<Note> getNotes() {
+        return notes;
     }
-    public void setNote(List<Note> note) {
-        this.note = note;
+    public void setNotes(List<Note> note) {
+        this.notes = note;
     }
     public PatientHealth getHealth() {
         return health;

@@ -139,10 +139,19 @@ function deletePatient(id) {
     }
   })
   }
-async function loadData() {
-  let response=await fetch(props.patientManagerUrl+"/getAll", {
-    method: "GET"})
-  patientData.value = await response.json()
+function loadData() {
+  fetch(props.patientManagerUrl+"/getAll", {
+    method: "GET"}).then(response => {
+      if(response.ok) {
+      response.json().then(result => {
+        patientData.value= result; 
+      })
+    }else{
+      location.href="/login"
+    }
+    })
+    
+  
 }
 function onSeeMore() {
   localStorage.setItem("patient",JSON.stringify(selectedPatient.value));

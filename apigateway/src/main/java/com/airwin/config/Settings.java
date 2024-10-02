@@ -1,8 +1,6 @@
 package com.airwin.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,16 +10,18 @@ import org.springframework.security.authentication.AbstractUserDetailsReactiveAu
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-//import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
-import org.springframework.web.client.RestTemplate;
 
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import com.airwin.model.User;
 import com.airwin.repository.UserRepository;
 import com.airwin.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.EurekaClient;
 
 import reactor.core.publisher.Mono;
@@ -50,28 +50,38 @@ private EurekaClient discoveryClient;
      */
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
-        //AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager());
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(req -> req
                         .pathMatchers("/api/user/**").hasAuthority("ADMIN")
-                        .anyExchange().permitAll())
-                        //.addFilterAt(webFilter, SecurityWebFiltersOrder.FIRST)
-                        .exceptionHandling(e-> e.authenticationEntryPoint((exchange,exception) -> {
-                            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                            return Mono.empty();
+                        .anyExchange().authenticated())
+                        .exceptionHandling(e-> e.authenticationEntryPoint((exchange,exception) -> {     
+                            return Mono.create(sink->{
+                                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                                sink.success();
+                            });
                         }))
-                        
+                        .addFilterAt((ex,chain)->{
+                            System.out.println(ex.getRequest().getPath().value());
+                            return chain.filter(ex);
+                        }, SecurityWebFiltersOrder.LAST)
                         .formLogin(login->login.loginPage("/api/login")
                            .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.ACCEPTED))
                         .authenticationSuccessHandler((exchange, auth) -> {
                             ServerHttpResponse response=exchange.getExchange().getResponse();
-                            String authorities = auth.getAuthorities().stream().findFirst().get().getAuthority();
                             response.setStatusCode(HttpStatus.OK);
-                            response.writeWith(Mono.just(response.bufferFactory().wrap(authorities.getBytes())));
-                            return Mono.empty();})
+                            User user=(User) auth.getPrincipal();
+                            user.setPassword("");
+                            ObjectMapper mapper = new ObjectMapper();
+                            response.getHeaders().add("Content-Type", "application/json");
+                            
+                            try {
+                                return response.writeWith(Mono.just(response.bufferFactory().wrap(mapper.writeValueAsString(user).getBytes())));
+                            } catch (JsonProcessingException e1) {
+                                return Mono.empty();
+                            }
+                        })
                         .authenticationFailureHandler((exchange, exception) -> {
-                            System.out.println("Loginmm Failed");
                             exchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                             return Mono.empty();
                         }))
@@ -81,7 +91,6 @@ private EurekaClient discoveryClient;
                                 return Mono.empty();
                             }))
                 .authenticationManager(authenticationManager());
-                
         return http.build();
     }
     @Bean
