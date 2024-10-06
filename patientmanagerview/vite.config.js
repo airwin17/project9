@@ -14,8 +14,11 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': 'http://localhost:8080'
-    }
+      '/api': 'http://host.docker.internal:8080'
+      //'/api': 'http://localhost:8080'
+    },
+    host: '0.0.0.0',
+    port: 5173
 },
   resolve: {
     alias: {

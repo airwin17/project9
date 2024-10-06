@@ -85,8 +85,10 @@ private EurekaClient discoveryClient;
      */
     public PatientHealth getPatientHealth(int symptomecount, int age, PatientGender gender) {
         RestTemplate restTemplate = new RestTemplate();
-        String riskUrl = discoveryClient.getNextServerFromEureka("RISKCALCULATOR", false).getHomePageUrl();
-        String url = riskUrl+"/api/risk/gethealth?gender="+gender.name()+"&age="+age+"&symptomecount="+symptomecount;
+        String devUrl="http://localhost";
+        String prodUrl="http://host.docker.internal";
+        int riskUrl = discoveryClient.getNextServerFromEureka("RISKCALCULATOR", false).getPort();
+        String url = prodUrl+":"+riskUrl+"/api/risk/gethealth?gender="+gender.name()+"&age="+age+"&symptomecount="+symptomecount;
         ResponseEntity<String> res = restTemplate.getForEntity(url, String.class);
         
         return PatientHealth.valueOf(res.getBody());

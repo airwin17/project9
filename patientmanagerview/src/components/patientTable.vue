@@ -107,6 +107,8 @@ function onAdd() {
   })
 }
 function savePatient(data) {
+  data.birthdate = data.birthdate.getDate() + "/" + (data.birthdate.getMonth() + 1) + "/" + data.birthdate.getFullYear();
+  
   fetch(props.patientManagerUrl+"/save", {
     method: "POST",
     headers: {

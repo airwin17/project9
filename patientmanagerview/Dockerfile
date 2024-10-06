@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-ENV PORT=5173
-EXPOSE 5173
-ENTRYPOINT [ "npm", "run", "dev" ]
+ENV PORT=4173
+ENV HOST=0.0.0.0
+EXPOSE 4173
+RUN npm run build
+ENTRYPOINT [ "npm", "run", "preview" ]

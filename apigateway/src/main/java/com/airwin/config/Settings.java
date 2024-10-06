@@ -113,11 +113,13 @@ private EurekaClient discoveryClient;
     }
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-        String patientUrl=discoveryClient.getNextServerFromEureka("PATIENTMANAGER", false).getHomePageUrl();
-        String riskUrl=discoveryClient.getNextServerFromEureka("RISKMANAGER", false).getHomePageUrl();
+        String devHost="http://localhost";
+        String prodHost="http://host.docker.internal";
+        int patientPort=discoveryClient.getNextServerFromEureka("PATIENTMANAGER", false).getPort();
+        int riskPort=discoveryClient.getNextServerFromEureka("RISKMANAGER", false).getPort();
         return builder.routes()
-        .route("PATIENTMANAGER",r->r.path("/api/patient/**").uri(patientUrl))
-        .route("RISKMANAGER",r->r.path("/api/note/**").uri(riskUrl))
+        .route("PATIENTMANAGER",r->r.path("/api/patient/**").uri(prodHost+":"+patientPort))
+        .route("RISKMANAGER",r->r.path("/api/note/**").uri(prodHost+":"+riskPort))
                 .build();
     }
 

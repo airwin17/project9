@@ -6,4 +6,5 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8083/eureka
+      defaultZone: http://host.docker.internal:8083/eureka
+      #defaultZone: http://localhost:8083/eureka

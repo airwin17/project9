@@ -35,7 +35,7 @@ public class User implements UserDetails {
         return userid;
     }
 
-    public void setUserid(int id) {
+    public void setUserid(Integer id) {
         this.userid = id;
     }
 
