@@ -24,7 +24,7 @@ public class CalculatorService {
      * @return {@link PatientHealth} 
      */
     public String getPatientHealth(int symptomecount, int age, String gender) {
-        String res=null;
+        String res="None";
         if(symptomecount<=2){
             res="None";
         }else if(age>=30){
@@ -37,13 +37,13 @@ public class CalculatorService {
             }
         }else if(age<30){
             if(gender=="MALE"){
-                if(symptomecount==3){
+                if(symptomecount<=4){
                     res="In_Danger";
                 }else if(symptomecount>=5){
                     res="Early_onset";
                 }
             }else if (gender=="FEMALE"){
-                if(symptomecount==4){
+                if(symptomecount<7){
                     res="In_Danger";
                 }else if(symptomecount>=7){
                     res="Early_onset";
