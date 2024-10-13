@@ -18,8 +18,7 @@ import com.airwin.dto.UserDTO;
 import com.airwin.model.User;
 import com.airwin.service.UserService;
 
-
-
+import io.swagger.v3.oas.annotations.Operation;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -30,6 +29,7 @@ public class UserContoller {
     public UserContoller(UserService userService) {
         this.userService = userService;
     }
+    @Operation(summary = "Add new user \n Password must be at least 6 characters long and contain at least one letter and one number and username must be unique.")
     @PostMapping("/add")
     public Mono<ResponseEntity<?>> addUser(@RequestBody User user) {
         
@@ -44,6 +44,7 @@ public class UserContoller {
             });
         });
     }
+    @Operation(summary = "Get all users")
     @GetMapping("/getAll")
     public Mono<ResponseEntity<List<UserDTO>>> getAllUsers() {
         return Mono.create(sink -> {
@@ -53,7 +54,7 @@ public class UserContoller {
                 .subscribe(sink::success, sink::error);
         });
     }
-    
+    @Operation(summary = "Delete user by id")
     @DeleteMapping("/delete")
     public Mono<ResponseEntity<String>> deleteUser(@RequestParam("userid") int id,@AuthenticationPrincipal User user) {
         return Mono.create(sink->{

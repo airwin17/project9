@@ -1,0 +1,13 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://host.docker.internal:3306/userdb?serverTimezone=Europe/Paris
+    username: root
+    password: rootroot
+  application:
+    name: apigateway
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://host.docker.internal:8083/eureka

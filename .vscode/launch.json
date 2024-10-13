@@ -8,6 +8,7 @@
             "type": "java",
             "name": "RiskCalculatorApp",
             "request": "launch",
+            "vmArgs": "-Dspring.profiles.active=dev",
             "mainClass": "com.airwin.RiskCalculatorApp",
             "projectName": "riskcalculator"
         },
@@ -21,6 +22,7 @@
             "type": "java",
             "name": "ApiGatewayApplication",
             "request": "launch",
+            "vmArgs": "-Dspring.profiles.active=dev",
             "mainClass": "com.airwin.ApiGatewayApplication",
             "projectName": "apigateway"
         },
@@ -28,6 +30,7 @@
             "type": "java",
             "name": "EurekaServerApplication",
             "request": "launch",
+            "vmArgs": "-Dspring.profiles.active=dev",
             "mainClass": "com.airwin.EurekaServerApplication",
             "projectName": "eurekaserver"
         },
@@ -35,6 +38,7 @@
             "type": "java",
             "name": "PatientmanagerApplication",
             "request": "launch",
+            "vmArgs": "-Dspring.profiles.active=dev",
             "mainClass": "com.airwin.PatientmanagerApplication",
             "projectName": "patientmanager"
         },
@@ -42,6 +46,7 @@
             "type": "java",
             "name": "RiskManagerApp",
             "request": "launch",
+            "vmArgs": "-Dspring.profiles.active=dev",
             "mainClass": "com.airwin.RiskManagerApp",
             "projectName": "riskmanager"
         }

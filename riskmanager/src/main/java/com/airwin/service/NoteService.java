@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,8 @@ import com.netflix.discovery.EurekaClient;
 
 @Service
 public class NoteService {
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
     private NoteRepository noteRepository;
     @Autowired
 private EurekaClient discoveryClient;
@@ -85,10 +88,10 @@ private EurekaClient discoveryClient;
      */
     public PatientHealth getPatientHealth(int symptomecount, int age, PatientGender gender) {
         RestTemplate restTemplate = new RestTemplate();
-        String devUrl="http://localhost";
-        String prodUrl="http://host.docker.internal";
+
+        String host=activeProfile.equals("dev")?"localhost":"host.docker.internal";
         int riskUrl = discoveryClient.getNextServerFromEureka("RISKCALCULATOR", false).getPort();
-        String url = prodUrl+":"+riskUrl+"/api/risk/gethealth?gender="+gender.name()+"&age="+age+"&symptomecount="+symptomecount;
+        String url = "http://"+host+":"+riskUrl+"/api/risk/gethealth?gender="+gender.name()+"&age="+age+"&symptomecount="+symptomecount;
         ResponseEntity<String> res = restTemplate.getForEntity(url, String.class);
         
         return PatientHealth.valueOf(res.getBody());

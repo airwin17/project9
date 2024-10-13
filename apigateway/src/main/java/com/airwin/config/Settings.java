@@ -1,6 +1,11 @@
 package com.airwin.config;
 
+import java.io.InputStream;
+
+import org.springdoc.core.configuration.SpringDocConfiguration;
+import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.yaml.snakeyaml.Yaml;
+
 import com.airwin.model.User;
 import com.airwin.repository.UserRepository;
 import com.airwin.service.UserService;
@@ -24,6 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.EurekaClient;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import reactor.core.publisher.Mono;
 
 import org.springframework.http.HttpStatus;
@@ -31,6 +39,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableConfigurationProperties
 @EnableR2dbcRepositories(basePackageClasses = UserRepository.class)
 public class Settings {
     @Autowired
@@ -51,46 +60,49 @@ private EurekaClient discoveryClient;
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeExchange(req -> req
-                        .pathMatchers("/api/user/**").hasAuthority("ADMIN")
-                        .anyExchange().authenticated())
-                        .exceptionHandling(e-> e.authenticationEntryPoint((exchange,exception) -> {     
-                            return Mono.create(sink->{
-                                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                                sink.success();
-                            });
-                        }))
-                        .addFilterAt((ex,chain)->{
-                            System.out.println(ex.getRequest().getPath().value());
-                            return chain.filter(ex);
-                        }, SecurityWebFiltersOrder.LAST)
-                        .formLogin(login->login.loginPage("/api/login")
-                           .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.ACCEPTED))
-                        .authenticationSuccessHandler((exchange, auth) -> {
-                            ServerHttpResponse response=exchange.getExchange().getResponse();
-                            response.setStatusCode(HttpStatus.OK);
-                            User user=(User) auth.getPrincipal();
-                            user.setPassword("");
-                            ObjectMapper mapper = new ObjectMapper();
-                            response.getHeaders().add("Content-Type", "application/json");
-                            
-                            try {
-                                return response.writeWith(Mono.just(response.bufferFactory().wrap(mapper.writeValueAsString(user).getBytes())));
-                            } catch (JsonProcessingException e1) {
-                                return Mono.empty();
-                            }
-                        })
-                        .authenticationFailureHandler((exchange, exception) -> {
-                            exchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                            return Mono.empty();
-                        }))
-                        .logout(logout -> logout.logoutUrl("/api/logout")
-                            .logoutSuccessHandler((ex, auth) -> {
-                                ex.getExchange().getResponse().setStatusCode(HttpStatus.OK);
-                                return Mono.empty();
-                            }))
-                .authenticationManager(authenticationManager());
+            .csrf(csrf -> csrf.disable())
+            .authorizeExchange(req -> req
+                .pathMatchers("/v3/**").permitAll()
+                .pathMatchers("/webjars/**").permitAll()
+                .pathMatchers("/api/user/**").hasAuthority("ADMIN")
+                .anyExchange().authenticated()
+                )
+                .exceptionHandling(e-> e.authenticationEntryPoint((exchange,exception) -> {     
+                    return Mono.create(sink->{
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    sink.success();
+                    });
+                }))
+                .addFilterAt((ex,chain)->{
+                    System.out.println(ex.getRequest().getPath().value());
+                    return chain.filter(ex);
+                }, SecurityWebFiltersOrder.LAST)
+                .formLogin(login->login.loginPage("/api/login")
+                   .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.ACCEPTED))
+                .authenticationSuccessHandler((exchange, auth) -> {
+                    ServerHttpResponse response=exchange.getExchange().getResponse();
+                    response.setStatusCode(HttpStatus.OK);
+                    User user=(User) auth.getPrincipal();
+                    user.setPassword("");
+                    ObjectMapper mapper = new ObjectMapper();
+                    response.getHeaders().add("Content-Type", "application/json");
+                    
+                    try {
+                    return response.writeWith(Mono.just(response.bufferFactory().wrap(mapper.writeValueAsString(user).getBytes())));
+                    } catch (JsonProcessingException e1) {
+                    return Mono.empty();
+                    }
+                })
+                .authenticationFailureHandler((exchange, exception) -> {
+                    exchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return Mono.empty();
+                }))
+                .logout(logout -> logout.logoutUrl("/api/logout")
+                    .logoutSuccessHandler((ex, auth) -> {
+                    ex.getExchange().getResponse().setStatusCode(HttpStatus.OK);
+                    return Mono.empty();
+                    }))
+            .authenticationManager(authenticationManager());
         return http.build();
     }
     @Bean
@@ -113,14 +125,12 @@ private EurekaClient discoveryClient;
     }
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-        String devHost="http://localhost";
-        String prodHost="http://host.docker.internal";
+        String Host = System.getProperty("spring.profiles.active").equals("dev") ? "http://localhost" : "http://host.docker.internal";
         int patientPort=discoveryClient.getNextServerFromEureka("PATIENTMANAGER", false).getPort();
         int riskPort=discoveryClient.getNextServerFromEureka("RISKMANAGER", false).getPort();
         return builder.routes()
-        .route("PATIENTMANAGER",r->r.path("/api/patient/**").uri(prodHost+":"+patientPort))
-        .route("RISKMANAGER",r->r.path("/api/note/**").uri(prodHost+":"+riskPort))
+        .route("PATIENTMANAGER",r->r.path("/api/patient/**").uri(Host+":"+patientPort))
+        .route("RISKMANAGER",r->r.path("/api/note/**").uri(Host+":"+riskPort))
                 .build();
     }
-
 }

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: riskcalculator
+server:
+  port: 8084
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://host.docker.internal:8083/eureka
